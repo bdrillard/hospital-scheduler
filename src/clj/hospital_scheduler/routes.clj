@@ -18,6 +18,7 @@
 (defquery select-event "sql/select-event.sql")
 (defquery insert-event! "sql/insert-event.sql")
 (defquery update-event! "sql/update-event.sql")
+(defquery delete-event! "sql/delete-event.sql")
 (defquery select-collisions "sql/select-collisions.sql")
 
 (defn collision?
@@ -70,3 +71,11 @@
         (update-event! db time patient doctor_id procedure_id descr id)
         (response {:status 200
                    :body (str "Event updated")})))))
+
+(defn delete-event
+  "Delete an event given its unique ID"
+  [id]
+  (do
+    (delete-event! db id)
+    (response {:status 200
+	       :body (str "Event deleted")})))

@@ -14,4 +14,7 @@
 
 ;; HTTP routes
 (defroutes app-routes
-  (GET "/events-summary" [] (response rs/events-summary)))
+  (GET "/events-summary" [] (response rs/read-summary))
+  (PUT "/create-event" {:params params} (rs/create-event params))
+  (POST "/update-event/:id" {:params params} (rs/update-event id params))
+  (DELETE "/delete-event/:id" [] (rs/delete-event id)))
