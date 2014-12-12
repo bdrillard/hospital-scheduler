@@ -1,0 +1,188 @@
+<html>
+  <head>
+    <title>Hospital Scheduler System</title>
+    <meta content="">
+    <style>
+	.calendar {
+		font-family: Arial, Helvetica, sans-serif;
+	}
+	
+	.modalDialog {
+		position: fixed;
+		font-family: Arial, Helvetica, sans-serif;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+		background: rgba(0,0,0,0.8);
+		z-index: 10000;
+		opacity:0;
+		-webkit-transition: opacity 400ms ease-in;
+		-moz-transition: opacity 400ms ease-in;
+		transition: opacity 400ms ease-in;
+		pointer-events: none;
+	}
+
+	.modalDialog:target {
+		opacity:1;
+		pointer-events: auto;
+	}
+
+	.modalDialog > div {
+		width: 400px;
+		position: relative;
+		margin: 10% auto;
+		padding: 5px 20px 13px 20px;
+		border-radius: 10px;
+		background: #fff;
+		background: -moz-linear-gradient(#fff, #999);
+		background: -webkit-linear-gradient(#fff, #999);
+		background: -o-linear-gradient(#fff, #999);
+	}
+
+	.close {
+		background: #606061;
+		color: #FFFFFF;
+		line-height: 25px;
+		position: absolute;
+		right: -12px;
+		text-align: center;
+		top: -10px;
+		width: 24px;
+		text-decoration: none;
+		font-weight: bold;
+		-webkit-border-radius: 12px;
+		-moz-border-radius: 12px;
+		border-radius: 12px;
+		-moz-box-shadow: 1px 1px 3px #000;
+		-webkit-box-shadow: 1px 1px 3px #000;
+		box-shadow: 1px 1px 3px #000;
+	}
+
+	.close:hover { background: #00d9ff; }
+	</style>
+	<link rel='stylesheet' href='fullcalendar.css'/>
+	<script src='lib/jquery.min.js'></script>
+	<script src='lib/moment.min.js'></script>
+	<script src='fullcalendar.js'></script>
+	<script type="text/javascript" src="jquery.timepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="jquery.timepicker.css" />
+
+  <script type="text/javascript" src="lib/bootstrap-datepicker.js"></script>
+  <link rel="stylesheet" type="text/css" href="lib/bootstrap-datepicker.css" />
+
+  <script type="text/javascript" src="lib/site.js"></script>
+  <link rel="stylesheet" type="text/css" href="lib/site.css" />
+  </head>
+  <body>
+  <h1 class="calendar">Hospital Scheduler System</h1>
+  <h4 class="calendar"><i>An administrative solution for managing physician appointments</i></h4>
+	<script>
+		$(document).ready(function() {
+
+		    // page is now ready, initialize the calendar...
+
+			$('#calendar').fullCalendar({
+			
+				events: 'http:54.174.120.2:3000/events-summary',	//our test form
+				
+				//USER WANTS TO CREATE AN APPOINTMENT ON THIS DAY
+				dayClick: function(date, jsEvent, view) {
+				
+					//format the date for the database
+					var date = moment().format("YYYY-MM-DDTHH:mm:ss") + "Z"
+					
+					//reset anything typed in the form
+					for(var i = 1; i<=6; i++){
+					  document.getElementById("tb" + i).value = "";
+					}
+					
+					//bring the form to the screen for user to fill out
+					location.href = "#openModal";
+
+					
+
+				},
+				
+				//IF USER CLICKS EXISTING APPOINTMENT
+				eventClick: function(calEvent, jsEvent, view) {
+
+					alert('Event: ' + calEvent.title);
+					alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+					alert('View: ' + view.name);
+
+					// change the border color just for fun
+					$(this).css('border-color', 'blue');
+
+				}
+				
+			});	
+		});
+		
+		
+	</script>
+	<div id='calendar' class="calendar"></div>
+	<a href="#openModal"/>
+	<div id="openModal" class="modalDialog">
+		<div>
+			<a href="#close" title="Close" class="close">X</a>
+			<h2>Schedule Appointment</h2>
+			<div id="procedure">Procedure:
+			  <select id="tb1">
+			    <option value="checkup">Check-Up</option> //0 in database
+			    <option value="mri">MRI</option>	//2
+			    <option value="radiology">Radiology</option>	//1
+			    <option value="surgery">Surgery</option>	//4
+			    <option value="therapy">Therapy</option>	//3
+			  </select>
+			</div><br/>
+			<div id="doctor">Doctor:
+			  <select id="tb2">
+			    <option value="doc1">Dr. Lawrence Jacoby</option> //0
+			    <option value="doc2">Dr. Leroy Jenkins</option>	//1
+			  </select>
+			</div><br/>
+			<div id="descr">Description:
+			  <input type="text" id="tb3"/>
+			</div><br/>
+			<div id="patient">Patient:
+			  <input type="text" id="tb4"/>
+			</div><br/>
+			<div id="start">Start:
+			  <input type="text" id="tb5"/>
+			  <script>
+			    $('#tb5').timepicker({ 'scrollDefault': 'now' });
+			  </script>
+			</div><br/>
+			<div id="duration">Duration:
+			  <input type="text" id="tb6"/>
+			  <script>
+			    $('#tb6').timepicker({ 'scrollDefault': 'now' });
+			    
+			  </script>
+			</div><br/>
+			<button id="submit" onclick="submit()">Submit</button>
+			<script>
+			  function submit(){
+			    var procedure = document.getElementById("tb1").value;
+			    var doctor = document.getElementById("tb2").value;
+			    var descr = document.getElementById("tb3").value;
+			    var patient = document.getElementById("tb4").value;
+			    var start = document.getElementById("tb5").value;
+			    var duration = document.getElementById("tb6").value;
+			    
+			    
+			    
+			    console.log("Submit button pressed");
+			    console.log(procedure);
+			    console.log(doctor);
+			    console.log(descr);
+			    console.log(patient);
+			    console.log(start);
+			    console.log(duration);
+			  }
+			</script>
+		</div>
+	</div>
+</body>
+</html>

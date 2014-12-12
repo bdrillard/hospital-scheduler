@@ -1,0 +1,63 @@
+<html>
+  <head>
+    <title>Hospital Scheduler System</title>
+    <meta content="">
+    <style></style>
+	<link rel='stylesheet' href='fullcalendar.css'/>
+	<script src='lib/jquery.min.js'></script>
+	<script src='lib/moment.min.js'></script>
+	<script src='fullcalendar.js'></script>
+	<script src='moment.js'></script>
+  </head>
+  <body>
+	<script>
+	var resultant = "";
+	var sample_input = "";
+	
+		$(document).ready(function() {
+
+		    // page is now ready, initialize the calendar...
+
+			$('#calendar').fullCalendar({
+				
+				//USER WANTS TO CREATE AN APPOINTMENT ON THIS DAY
+				dayClick: function(date, jsEvent, view) {
+				
+					//format the date for the database
+					var date = moment().format("YYYY-MM-DDTHH:mm:ss") + "Z"
+
+					//alert('Clicked on: ' + date);
+
+					//alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+
+					//alert('Current view: ' + view.name);
+					
+					window.open('form.html');
+					
+					//events: '54.174.120.2:3000/events-summary'	//our test form
+
+					// change the day's background color just for fun
+					$(this).css('background-color', 'red');
+
+				}
+				
+				//IF USER CLICKS EXISTING APPOINTMENT
+				eventClick: function(calEvent, jsEvent, view) {
+
+					alert('Event: ' + calEvent.title);
+					alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
+					alert('View: ' + view.name);
+
+					// change the border color just for fun
+					$(this).css('border-color', 'blue');
+
+				}
+				
+			});	
+		});
+		
+		
+	</script>
+	<div id='calendar'></div>
+</body>
+</html>
