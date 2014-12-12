@@ -3,8 +3,7 @@
   (:use clojure.java.jdbc
         environ.core)
   (:require [ring.util.response :refer [response]]
-            [yesql.core :refer [defquery]]
-            [clj-time.coerce :as coerce]))
+            [yesql.core :refer [defquery]]))
 
 ;;;; Routes served by database operations
 ;; database connector parameters
