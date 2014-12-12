@@ -66,13 +66,11 @@
 	<script src='lib/moment.min.js'></script>
 	<script src='fullcalendar.js'></script>
 	<script type="text/javascript" src="jquery.timepicker.js"></script>
-  <link rel="stylesheet" type="text/css" href="jquery.timepicker.css" />
-
-  <script type="text/javascript" src="lib/bootstrap-datepicker.js"></script>
-  <link rel="stylesheet" type="text/css" href="lib/bootstrap-datepicker.css" />
-
-  <script type="text/javascript" src="lib/site.js"></script>
-  <link rel="stylesheet" type="text/css" href="lib/site.css" />
+	<link rel="stylesheet" type="text/css" href="jquery.timepicker.css" />
+	<script type="text/javascript" src="lib/bootstrap-datepicker.js"></script>
+	<link rel="stylesheet" type="text/css" href="lib/bootstrap-datepicker.css" />
+	<script type="text/javascript" src="lib/site.js"></script>
+	<link rel="stylesheet" type="text/css" href="lib/site.css" />
   </head>
   <body>
   <h1 class="calendar">Hospital Scheduler System</h1>
@@ -92,28 +90,15 @@
 					//format the date for the database
 					var date = moment().format("YYYY-MM-DDTHH:mm:ss") + "Z"
 					
-					//reset anything typed in the form
-					for(var i = 1; i<=6; i++){
-					  document.getElementById("tb" + i).value = "";
-					}
-					
 					//bring the form to the screen for user to fill out
-					location.href = "#openModal";
-
-					
+					location.href = "#openModal";	
 
 				},
 				
 				//IF USER CLICKS EXISTING APPOINTMENT
 				eventClick: function(calEvent, jsEvent, view) {
-
-					alert('Event: ' + calEvent.title);
-					alert('Coordinates: ' + jsEvent.pageX + ',' + jsEvent.pageY);
-					alert('View: ' + view.name);
-
-					// change the border color just for fun
-					$(this).css('border-color', 'blue');
-
+					location.href = "#openModal";
+					console.log(calEvent);
 				}
 				
 			});	
@@ -125,15 +110,24 @@
 	<a href="#openModal"/>
 	<div id="openModal" class="modalDialog">
 		<div>
-			<a href="#close" title="Close" class="close">X</a>
+			<a href="#close" title="Close" class="close" onclick="resetForm()">X
+			  <script>
+			    //reset anything typed in the form
+				function resetForm(){
+				  for(var i = 1; i<=6; i++) {
+				  document.getElementById("tb" + i).value = "";
+				  }
+				}
+			  </script>
+			</a>
 			<h2>Schedule Appointment</h2>
 			<div id="procedure">Procedure:
 			  <select id="tb1">
-			    <option value="checkup">Check-Up</option> //0 in database
-			    <option value="mri">MRI</option>	//2
-			    <option value="radiology">Radiology</option>	//1
-			    <option value="surgery">Surgery</option>	//4
-			    <option value="therapy">Therapy</option>	//3
+			    <option value="Checkup">Checkup</option> //0 in database
+			    <option value="MRI">MRI</option>	//2
+			    <option value="Radiology">Radiology</option>	//1
+			    <option value="Surgery">Surgery</option>	//4
+			    <option value="Therapy">Therapy</option>	//3
 			  </select>
 			</div><br/>
 			<div id="doctor">Doctor:
@@ -157,8 +151,7 @@
 			<div id="duration">Duration:
 			  <input type="text" id="tb6"/>
 			  <script>
-			    $('#tb6').timepicker({ 'scrollDefault': 'now' });
-			    
+			    $('#tb6').timepicker({ 'scrollDefault': 'now' }); 
 			  </script>
 			</div><br/>
 			<button id="submit" onclick="submit()">Submit</button>
