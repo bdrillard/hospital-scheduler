@@ -1,3 +1,3 @@
 INSERT INTO events
-    (`id`, `time`, `patient`, `doctor_id`, `procedure_id`, `descr`)
-    VALUES (NULL, :time, :patient, :doctor_id, :procedure_id, :descr);
+    (`id`, `start`, `end`, `patient`, `doctor_id`, `procedure_id`, `descr`)
+    VALUES (NULL, :start, :end, :patient, :doctor_id, :procedure_id, :descr);

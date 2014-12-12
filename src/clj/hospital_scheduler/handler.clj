@@ -14,18 +14,19 @@
 
 ;; HTTP routes
 (defroutes app-routes
-  (GET "/events-summary" [] (response rs/read-events))
+  (GET "/events-summary" [] (rs/read-events))
+  (GET "/procedures" [] (rs/read-procedures))
+  (GET "/doctors" [] (rs/read-doctors))
   (PUT "/create-event" {params :params} (rs/create-event params))
-  (POST "/update-event/:id" {id :id params :params} (rs/update-event id params))
-  (DELETE "/delete-event/:id" [id] (rs/delete-event [id])))
+  (context "/:id" [id] (defroutes app-routes
+    (POST "/update-event" {params :params} (rs/update-event id params))
+    (DELETE "/delete-event" [] (rs/delete-event id)))))
 
 (def app
   (-> (handler/api app-routes)
       (middleware/wrap-json-body)
       (middleware/wrap-json-response)
-      (cors/wrap-cors (re-pattern (str "^http://"
-                                       (env :db-url) ":" (env :db-port)
-                                       "/events-summary$")))))
+      (cors/wrap-cors identity)))
 
 (defn -main [& args]
   (run-jetty #'app {:port 3000}))

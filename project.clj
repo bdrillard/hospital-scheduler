@@ -4,6 +4,7 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.5.1"]
+                 [clj-time "0.6.0"]
                  [ring "1.3.0"]
                  [ring/ring-json "0.3.1"]
                  [jumblerg/ring.middleware.cors "1.0.1"]
@@ -17,8 +18,8 @@
   :source-paths ["src/clj"]
   :main hospital-scheduler.handler
   :ring {:handler hospital-scheduler.handler/app}
-  :profiles {:dev {:env {:db-url "localhost"
+  :profiles {:dev {:env {:db-url "localhost" ; localhost
                          :db-port 3306
                          :db-name "scheduler"
                          :db-user "root"
-                         :db-pass "password"}}})
+                         :db-pass "eecs448!"}}}) ; password

@@ -3,7 +3,8 @@
   (:use clojure.java.jdbc
         environ.core)
   (:require [ring.util.response :refer [response]]
-            [yesql.core :refer [defquery]]))
+            [yesql.core :refer [defquery]]
+            [clj-time.coerce :as coerce]))
 
 ;;;; Routes served by database operations
 ;; database connector parameters
@@ -16,6 +17,8 @@
 ;; SQL queries and operations over event data
 (defquery select-events "sql/select-events.sql")
 (defquery select-event "sql/select-event.sql")
+(defquery select-procedures "sql/select-procedures.sql")
+(defquery select-doctors "sql/select-doctors.sql")
 (defquery insert-event! "sql/insert-event.sql")
 (defquery update-event! "sql/update-event.sql")
 (defquery delete-event! "sql/delete-event.sql")
@@ -24,25 +27,40 @@
 (defn collision?
   "Determine if any events exist with a given doctor already scheduled at
   a given time"
-  [id time doctor_id]
-  (if (seq (select-collisions db id time doctor_id))
+  [id start doctor_id]
+  (if (seq (select-collisions db id start doctor_id))
     true
     false))
 
 (defn read-events 
   "Select a listing of registered events"
   []
-  {:body (select-events db)})
+  {:body 
+   (for [result (select-events db)
+         :let [return (assoc result :title (str (:doctor result) "/" (:patient result))
+                                    :editable false 
+                                    :startEditable false)]]
+     return)})
+
+(defn read-procedures
+  "Select a listing of registered procedures"
+  []
+  {:body (select-procedures db)})
+
+(defn read-doctors
+  "Select a listing of registered doctors"
+  []
+  {:body (select-doctors db)})
 
 (defn create-event
   "Register a new event.
   Disallow a doctor from being registered two different events at the same time"
-  [{:keys [time patient doctor_id procedure_id descr]}]
-  (if (collision? -1 time doctor_id)
+  [{:keys [start end patient doctor_id procedure_id descr]}]
+  (if (collision? -1 start doctor_id)
     (response {:status 403
-               :body {:error (str "An event at " time " was already scheduled for the selected doctor")}})
+               :body {:error (str "An event at " start " was already scheduled for the selected doctor")}})
     (do
-      (insert-event! db time patient doctor_id procedure_id descr)
+      (insert-event! db start end patient doctor_id procedure_id descr)
       (response {:status 200
                  :body (str "Event scheduled")}))))
 
@@ -61,14 +79,16 @@
 
 (defn update-event
   "Update an event given its unique ID and a map of values to change"
-  [id event-updates]
+  [id {:keys [start end patient doctor_id procedure_id descr] 
+       :or [start nil end nil patient nil doctor_id nil procedure_id nil descr nil]
+       :as event-updates}]
   (let [old-event (first (select-event db id)) ; select-event on unique id returns single element list
-        {:keys [id time patient doctor_id procedure_id descr]} (merge-new old-event event-updates)]
-    (if (collision? id time doctor_id)
+        {:keys [new-start new-doctor_id] :as new-event} (merge-new old-event event-updates)]
+    (if (collision? id new-start new-doctor_id)
       (response {:status 403
-                 :body {:error (str "An event at " time " was already scheduled for the selected doctor")}})
+                 :body {:error (str "An event at " new-start " was already scheduled for the selected doctor")}})
       (do
-        (update-event! db time patient doctor_id procedure_id descr id)
+        (update-event! db start end patient doctor_id procedure_id descr id)
         (response {:status 200
                    :body (str "Event updated")})))))
 
