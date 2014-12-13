@@ -196,8 +196,8 @@
                     $.ajax({
                             url: 'http://54.174.120.2:3000/create-event',
                             type: 'PUT',
-                            data: {procedure: procedure,
-                                   doctor: doctor,
+                            data: {procedure_id: procedure,
+                                   doctor_id: doctor,
                                    descr: descr,
                                    patient: patient,
                                    start: start,
@@ -275,8 +275,8 @@
                     $.ajax({
                             url: 'http://54.174.120.2:3000/' + id + '/update-event',
                             type: 'POST',
-                            data: {procedure: upProcedure,
-                                   doctor: upDoctor,
+                            data: {procedure_id: upProcedure,
+                                   doctor_id: upDoctor,
                                    descr: upDescr,
                                    patient: upPatient,
                                    start: upStart,
