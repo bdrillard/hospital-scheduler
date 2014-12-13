@@ -1,4 +1,4 @@
-SELECT events.id, events.start, events.end, events.patient, events.descr, doctors.doctor, procedures.procedure 
+SELECT events.id, events.start, events.end, events.patient, events.descr, doctors.doctor, events.doctor_id, procedures.procedure, events.procedure_id
     FROM events 
     INNER JOIN doctors 
         ON events.doctor_id=doctors.id 
