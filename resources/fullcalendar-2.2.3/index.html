@@ -124,8 +124,13 @@
 				
 				//IF USER CLICKS EXISTING APPOINTMENT
 				eventClick: function(calEvent, jsEvent, view) {
+                    $('#tb1').val(calEvent.procedure_id);
+                    $('#tb2').val(calEvent.doctor_id);
+                    $('#tb3').val(calEvent.descr);
+                    $('#tb4').val(calEvent.patient);
+                    $('#tb5').val(calEvent.start);
 					location.href = "#openModal";
-					console.log(calEvent);
+                    console.log(calEvent);
 				}
 				
 			});	
@@ -150,17 +155,12 @@
 			<h2>Schedule Appointment</h2>
 			<div id="procedure">Procedure:
 			  <select id="tb1">
-                <!-- <option value="Checkup">Checkup</option> //0 in database
-			    <option value="MRI">MRI</option>	//2
-			    <option value="Radiology">Radiology</option>	//1
-			    <option value="Surgery">Surgery</option>	//4
-                <option value="Therapy">Therapy</option>	//3-->
-			  </select>
+			    <!-- Dynamically filled -->
+              </select>
 			</div><br/>
 			<div id="doctor">Doctor:
 			  <select id="tb2">
-			    <!-- <option value="doc1">Dr. Lawrence Jacoby</option> //0
-                <option value="doc2">Dr. Leroy Jenkins</option>	//1-->
+                  <!-- Dynamically filled -->
 			  </select>
 			</div><br/>
 			<div id="descr">Description:
