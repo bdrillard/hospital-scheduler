@@ -208,14 +208,6 @@
 					            location.href = "#closeCreate";
                             }
                     });
-
-                    console.log("Submit button pressed");
-                    console.log(procedure);
-                    console.log(doctor);
-                    console.log(descr);
-                    console.log(patient);
-                    console.log(start);
-                    console.log(end);
 			    }
 			</script>
 		</div>
@@ -265,12 +257,12 @@
 			<script>
 			    function update(){
                     var id = document.getElementById("tb13").value;
-                    var upProcedure = document.getElementById("tb7").value;
-                    var upDoctor = document.getElementById("tb8").value;
-                    var upDescr = document.getElementById("tb9").value;
-                    var upPatient = document.getElementById("tb10").value;
-                    var upStart = document.getElementById("tb11").value;
-                    var upEnd = document.getElementById("tb12").value;
+                    var procedure = document.getElementById("tb7").value;
+                    var doctor = document.getElementById("tb8").value;
+                    var descr = document.getElementById("tb9").value;
+                    var patient = document.getElementById("tb10").value;
+                    var start = document.getElementById("tb11").value;
+                    var end = document.getElementById("tb12").value;
                     
                     $.ajax({
                             url: 'http://54.174.120.2:3000/' + id + '/update-event',
@@ -304,8 +296,5 @@
 			</script>
 		</div>
 	</div>
-
-
-
 </body>
 </html>
