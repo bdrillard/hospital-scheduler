@@ -77,16 +77,43 @@
   <h4 class="calendar"><i>An administrative solution for managing physician appointments</i></h4>
 	<script>
 		$(document).ready(function() {
-
+            var procedures = [];
+            var doctors = [];
 		    // page is now ready, initialize the calendar...
+            // get list of procedures
+            $.getJSON(
+                'http://54.174.120.2:3000/procedures',
+                function(data) {
+                    $.each(data, function(key, val) {
+                        procedures.push(val);
+                        $('#tb1').append($('<option/>', {
+                            value: val.id,
+                            text: val.procedure
+                        }));
+                    });
+                }
+            );
 
+            // get list of doctors
+            $.getJSON(
+                'http://54.174.120.2:3000/doctors',
+                function(data) {
+                    $.each(data, function(key, val) {
+                        doctors.push(val);
+                        $('#tb2').append($('<option/>', {
+                            value: val.id,
+                            text: val.doctor
+                        }));
+                    });
+                }
+            );
 			$('#calendar').fullCalendar({
 			
-				events: 'http:54.174.120.2:3000/events-summary',	//our test form
-				
+				events: 'http://54.174.120.2:3000/events-summary',	//our test form
+			    	
 				//USER WANTS TO CREATE AN APPOINTMENT ON THIS DAY
 				dayClick: function(date, jsEvent, view) {
-				
+
 					//format the date for the database
 					var date = moment().format("YYYY-MM-DDTHH:mm:ss") + "Z"
 					
@@ -123,17 +150,17 @@
 			<h2>Schedule Appointment</h2>
 			<div id="procedure">Procedure:
 			  <select id="tb1">
-			    <option value="Checkup">Checkup</option> //0 in database
+                <!-- <option value="Checkup">Checkup</option> //0 in database
 			    <option value="MRI">MRI</option>	//2
 			    <option value="Radiology">Radiology</option>	//1
 			    <option value="Surgery">Surgery</option>	//4
-			    <option value="Therapy">Therapy</option>	//3
+                <option value="Therapy">Therapy</option>	//3-->
 			  </select>
 			</div><br/>
 			<div id="doctor">Doctor:
 			  <select id="tb2">
-			    <option value="doc1">Dr. Lawrence Jacoby</option> //0
-			    <option value="doc2">Dr. Leroy Jenkins</option>	//1
+			    <!-- <option value="doc1">Dr. Lawrence Jacoby</option> //0
+                <option value="doc2">Dr. Leroy Jenkins</option>	//1-->
 			  </select>
 			</div><br/>
 			<div id="descr">Description:
