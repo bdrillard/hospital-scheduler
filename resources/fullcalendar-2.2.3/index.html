@@ -77,16 +77,17 @@
   <h4 class="calendar"><i>An administrative solution for managing physician appointments</i></h4>
 	<script>
 		$(document).ready(function() {
-            var procedures = [];
-            var doctors = [];
 		    // page is now ready, initialize the calendar...
             // get list of procedures
             $.getJSON(
                 'http://54.174.120.2:3000/procedures',
                 function(data) {
                     $.each(data, function(key, val) {
-                        procedures.push(val);
                         $('#tb1').append($('<option/>', {
+                            value: val.id,
+                            text: val.procedure
+                        }));
+                        $('#tb7').append($('<option/>', {
                             value: val.id,
                             text: val.procedure
                         }));
@@ -99,8 +100,11 @@
                 'http://54.174.120.2:3000/doctors',
                 function(data) {
                     $.each(data, function(key, val) {
-                        doctors.push(val);
                         $('#tb2').append($('<option/>', {
+                            value: val.id,
+                            text: val.doctor
+                        }));
+                        $('#tb8').append($('<option/>', {
                             value: val.id,
                             text: val.doctor
                         }));
@@ -115,22 +119,25 @@
 				dayClick: function(date, jsEvent, view) {
 
 					//format the date for the database
-					var date = moment().format("YYYY-MM-DDTHH:mm:ss") + "Z"
-					
+					var date = moment().format("YYYY-MM-DD HH:mm:ss");
+                    $('#tb5').val(date);
+                    $('#tb6').val(date);
 					//bring the form to the screen for user to fill out
-					location.href = "#openModal";	
+					location.href = "#openModalCreate";	
 
 				},
 				
 				//IF USER CLICKS EXISTING APPOINTMENT
 				eventClick: function(calEvent, jsEvent, view) {
-                    $('#tb1').val(calEvent.procedure_id);
-                    $('#tb2').val(calEvent.doctor_id);
-                    $('#tb3').val(calEvent.descr);
-                    $('#tb4').val(calEvent.patient);
-                    $('#tb5').val(calEvent.start);
-					location.href = "#openModal";
-                    console.log(calEvent);
+                    // set defaults to existing event
+                    $('#tb7').val(calEvent.procedure_id);
+                    $('#tb8').val(calEvent.doctor_id);
+                    $('#tb9').val(calEvent.descr);
+                    $('#tb10').val(calEvent.patient);
+                    $('#tb11').val(calEvent.start._i);
+                    $('#tb12').val(calEvent.end._i);
+                    $('#tb13').val(calEvent.id);
+					location.href = "#openModalUpdate";
 				}
 				
 			});	
@@ -139,10 +146,11 @@
 		
 	</script>
 	<div id='calendar' class="calendar"></div>
-	<a href="#openModal"/>
-	<div id="openModal" class="modalDialog">
+
+	<a href="#openModalCreate"/>
+	<div id="openModalCreate" class="modalDialog">
 		<div>
-			<a href="#close" title="Close" class="close" onclick="resetForm()">X
+			<a href="#closeCreate" title="Close" class="close" onclick="resetForm()">X
 			  <script>
 			    //reset anything typed in the form
 				function resetForm(){
@@ -170,39 +178,134 @@
 			  <input type="text" id="tb4"/>
 			</div><br/>
 			<div id="start">Start:
-			  <input type="text" id="tb5"/>
-			  <script>
-			    $('#tb5').timepicker({ 'scrollDefault': 'now' });
-			  </script>
+              <input type="text" id="tb5"/>
 			</div><br/>
-			<div id="duration">Duration:
+			<div id="duration">End:
 			  <input type="text" id="tb6"/>
-			  <script>
-			    $('#tb6').timepicker({ 'scrollDefault': 'now' }); 
-			  </script>
 			</div><br/>
-			<button id="submit" onclick="submit()">Submit</button>
+			<button id="create" onclick="create()">Create</button>
 			<script>
-			  function submit(){
-			    var procedure = document.getElementById("tb1").value;
-			    var doctor = document.getElementById("tb2").value;
-			    var descr = document.getElementById("tb3").value;
-			    var patient = document.getElementById("tb4").value;
-			    var start = document.getElementById("tb5").value;
-			    var duration = document.getElementById("tb6").value;
-			    
-			    
-			    
-			    console.log("Submit button pressed");
-			    console.log(procedure);
-			    console.log(doctor);
-			    console.log(descr);
-			    console.log(patient);
-			    console.log(start);
-			    console.log(duration);
-			  }
+			    function create(){
+                    var procedure = document.getElementById("tb1").value;
+                    var doctor = document.getElementById("tb2").value;
+                    var descr = document.getElementById("tb3").value;
+                    var patient = document.getElementById("tb4").value;
+                    var start = document.getElementById("tb5").value;
+                    var end = document.getElementById("tb6").value;
+                    
+                    $.ajax({
+                            url: 'http://54.174.120.2:3000/create-event',
+                            type: 'PUT',
+                            data: {procedure: procedure,
+                                   doctor: doctor,
+                                   descr: descr,
+                                   patient: patient,
+                                   start: start,
+                                   end: end},
+                            success: function(result) {
+                                $('#calendar').fullCalendar( 'refetchEvents' );
+                                $('#calendar').fullCalendar( 'rerenderEvents' );
+					            location.href = "#closeCreate";
+                            }
+                    });
+
+                    console.log("Submit button pressed");
+                    console.log(procedure);
+                    console.log(doctor);
+                    console.log(descr);
+                    console.log(patient);
+                    console.log(start);
+                    console.log(end);
+			    }
 			</script>
 		</div>
 	</div>
+
+	<a href="#openModalUpdate"/>
+	<div id="openModalUpdate" class="modalDialog">
+		<div>
+			<a href="#closeUpdate" title="Close" class="close" onclick="resetForm()">X
+			  <script>
+			    //reset anything typed in the form
+				function resetForm(){
+				  for(var i = 1; i<=6; i++) {
+				  document.getElementById("tb" + i).value = "";
+				  }
+				}
+			  </script>
+			</a>
+			<h2>Schedule Appointment</h2>
+			<div id="procedure">Procedure:
+			  <select id="tb7">
+			    <!-- Dynamically filled -->
+              </select>
+			</div><br/>
+			<div id="doctor">Doctor:
+			  <select id="tb8">
+                  <!-- Dynamically filled -->
+			  </select>
+			</div><br/>
+			<div id="descr">Description:
+			  <input type="text" id="tb9"/>
+			</div><br/>
+			<div id="patient">Patient:
+			  <input type="text" id="tb10"/>
+			</div><br/>
+			<div id="start">Start:
+              <input type="text" id="tb11"/>
+			</div><br/>
+			<div id="duration">End:
+			  <input type="text" id="tb12"/>
+			</div><br/>
+            <div id="id" style="visibility: hidden">
+                <input type="text" id="tb13"/>
+            </div>
+			<button id="update" onclick="update()">Update</button>
+            <button id="delete" onclick="remove()">Delete</button>
+			<script>
+			    function update(){
+                    var id = document.getElementById("tb13").value;
+                    var upProcedure = document.getElementById("tb7").value;
+                    var upDoctor = document.getElementById("tb8").value;
+                    var upDescr = document.getElementById("tb9").value;
+                    var upPatient = document.getElementById("tb10").value;
+                    var upStart = document.getElementById("tb11").value;
+                    var upEnd = document.getElementById("tb12").value;
+                    
+                    $.ajax({
+                            url: 'http://54.174.120.2:3000/' + id + '/update-event',
+                            type: 'POST',
+                            data: {procedure: upProcedure,
+                                   doctor: upDoctor,
+                                   descr: upDescr,
+                                   patient: upPatient,
+                                   start: upStart,
+                                   end: upEnd},
+                            success: function(result) {
+                                $('#calendar').fullCalendar( 'refetchEvents' );
+                                $('#calendar').fullCalendar( 'rerenderEvents' );
+					            location.href = "#closeUpdate";
+                            }
+                    });
+			    }
+
+                function remove(){
+                    var id = document.getElementById("tb13").value;
+                    $.ajax({
+                            url: 'http://54.174.120.2:3000/' + id + '/delete-event',
+                            type: 'DELETE',
+                            success: function(result) {
+                                $("#calendar").fullCalendar( 'refetchEvents' );
+                                $("#calendar").fullCalendar( 'rerenderEvents' );
+					            location.href = "#closeUpdate";
+                            }
+                    });
+                }
+			</script>
+		</div>
+	</div>
+
+
+
 </body>
 </html>
