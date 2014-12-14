@@ -249,7 +249,7 @@
                 <input type="text" id="tb13"/>
             </div>
 			<button id="update" onclick="update()">Update</button>
-            <button id="delete" onclick="remove()">Delete</button>
+            <button id="delete" onclick="del()">Delete</button>
 			<script>
 			    function update(){
                     var id = document.getElementById("tb13").value;
@@ -277,7 +277,7 @@
                     });
 			    }
 
-                function remove(){
+                function del(){
                     var id = document.getElementById("tb13").value;
                     $.ajax({
                             url: 'http://54.174.120.2:3000/' + id + '/delete-event',
