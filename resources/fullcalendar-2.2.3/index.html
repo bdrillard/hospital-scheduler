@@ -3,74 +3,74 @@
     <title>Hospital Scheduler System</title>
     <meta content="">
     <style>
-	.calendar {
-		font-family: Arial, Helvetica, sans-serif;
-	}
-	
-	.modalDialog {
-		position: fixed;
-		font-family: Arial, Helvetica, sans-serif;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-		background: rgba(0,0,0,0.8);
-		z-index: 10000;
-		opacity:0;
-		-webkit-transition: opacity 400ms ease-in;
-		-moz-transition: opacity 400ms ease-in;
-		transition: opacity 400ms ease-in;
-		pointer-events: none;
-	}
+		.calendar {
+			font-family: Arial, Helvetica, sans-serif;
+		}
+		
+		.modalDialog {
+			position: fixed;
+			font-family: Arial, Helvetica, sans-serif;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+			background: rgba(0,0,0,0.8);
+			z-index: 10000;
+			opacity:0;
+			-webkit-transition: opacity 200ms ease-in;
+			-moz-transition: opacity 200ms ease-in;
+			transition: opacity 200ms ease-in;
+			pointer-events: none;
+		}
 
-	.modalDialog:target {
-		opacity:1;
-		pointer-events: auto;
-	}
+		.modalDialog:target {
+			opacity:1;
+			pointer-events: auto;
+		}
 
-	.modalDialog > div {
-		width: 400px;
-		position: relative;
-		margin: 10% auto;
-		padding: 5px 20px 13px 20px;
-		border-radius: 10px;
-		background: #fff;
-		background: -moz-linear-gradient(#fff, #999);
-		background: -webkit-linear-gradient(#fff, #999);
-		background: -o-linear-gradient(#fff, #999);
-	}
+		.modalDialog > div {
+			width: 400px;
+			position: relative;
+			margin: 10% auto;
+			padding: 5px 20px 13px 20px;
+			border-radius: 10px;
+			background: #fff;
+			background: -moz-linear-gradient(#fff, #999);
+			background: -webkit-linear-gradient(#fff, #999);
+			background: -o-linear-gradient(#fff, #999);
+		}
 
-	.close {
-		background: #606061;
-		color: #FFFFFF;
-		line-height: 25px;
-		position: absolute;
-		right: -12px;
-		text-align: center;
-		top: -10px;
-		width: 24px;
-		text-decoration: none;
-		font-weight: bold;
-		-webkit-border-radius: 12px;
-		-moz-border-radius: 12px;
-		border-radius: 12px;
-		-moz-box-shadow: 1px 1px 3px #000;
-		-webkit-box-shadow: 1px 1px 3px #000;
-		box-shadow: 1px 1px 3px #000;
-	}
+		.close {
+			background: #606061;
+			color: #FFFFFF;
+			line-height: 25px;
+			position: absolute;
+			right: -12px;
+			text-align: center;
+			top: -10px;
+			width: 24px;
+			text-decoration: none;
+			font-weight: bold;
+			-webkit-border-radius: 12px;
+			-moz-border-radius: 12px;
+			border-radius: 12px;
+			-moz-box-shadow: 1px 1px 3px #000;
+			-webkit-box-shadow: 1px 1px 3px #000;
+			box-shadow: 1px 1px 3px #000;
+		}
 
-	.close:hover { background: #00d9ff; }
+		.close:hover { background: #00d9ff; }
 	</style>
 	<link rel='stylesheet' href='fullcalendar.css'/>
 	<script src='lib/jquery.min.js'></script>
 	<script src='lib/moment.min.js'></script>
 	<script src='fullcalendar.js'></script>
-	<script type="text/javascript" src="lib/site.js"></script>
-	<link rel="stylesheet" type="text/css" href="lib/site.css" />
+	<script type="text/javascript" src="lib/site.js"></script> 
+	<link rel="stylesheet" type="text/css" href="lib/site.css"/>
   </head>
   <body>
-  <h1 class="calendar">Hospital Scheduler System</h1>
-  <h4 class="calendar"><i>An administrative solution for managing physician appointments</i></h4>
+    <h1 class="calendar"><center>Hospital Scheduler System</center></h1>
+    <h4 class="calendar"><center><i>An administrative solution for managing physician appointments</i></center></h4>
 	<script>
 		$(document).ready(function() {
 		    // page is now ready, initialize the calendar...
@@ -109,75 +109,81 @@
             );
 			$('#calendar').fullCalendar({
 			
-				events: 'http://54.174.120.2:3000/events-summary',	//our test form
+				events: 'http://54.174.120.2:3000/events-summary',	//items on the calendar
 			    	
 				//USER WANTS TO CREATE AN APPOINTMENT ON THIS DAY
 				dayClick: function(date, jsEvent, view) {
 
-					//format the date for the database
-					var date = moment().format("YYYY-MM-DD HH:mm:ss");
-                    $('#tb5').val(date);
-                    $('#tb6').val(date);
-					//bring the form to the screen for user to fill out
-					location.href = "#openModalCreate";	
-
+					//disable appointment creation on dates that have already passed (because what's the point?)
+					if(date.format('X') >= moment().format('X') || date.format('l') == moment().format('l')){
+						//format the date for the database
+	                	$('#tb5').val(date.format("YYYY-MM-DD"));
+	                	$('#tb6').val(date.format("YYYY-MM-DD"));
+	                	$('#tb14').val(date.format("HH:mm:ss"));
+	                	$('#tb15').val(date.add(1,'hour').format("HH:mm:ss"));
+	                	//bring the form to the screen for user to fill out
+						location.href = "#openModalCreate";
+                    }
 				},
 				
 				//IF USER CLICKS EXISTING APPOINTMENT
 				eventClick: function(calEvent, jsEvent, view) {
-                    // set defaults to existing event
+
+					// set defaults to existing event
                     $('#tb7').val(calEvent.procedure_id);
                     $('#tb8').val(calEvent.doctor_id);
                     $('#tb9').val(calEvent.descr);
                     $('#tb10').val(calEvent.patient);
-                    $('#tb11').val(calEvent.start._i);
-                    $('#tb12').val(calEvent.end._i);
+
+                    //keep the date display format consistent between create and update
+                    $('#tb11').val(calEvent.start._i.substring(0,10));
+                    $('#tb12').val(calEvent.end._i.substring(0,10));
                     $('#tb13').val(calEvent.id);
+                    $('#tb16').val(calEvent.start._i.substring(11,19));
+                    $('#tb17').val(calEvent.end._i.substring(11,19));
 					location.href = "#openModalUpdate";
 				}
 				
 			});	
-		});
-		
-		
+		});	
 	</script>
+
+    <!-- CALENDAR -->
 	<div id='calendar' class="calendar"></div>
 
+    <!-- POPUP FORM FOR CREATING A NEW APPOINTMENT -->
 	<a href="#openModalCreate"/>
 	<div id="openModalCreate" class="modalDialog">
 		<div>
-			<a href="#closeCreate" title="Close" class="close" onclick="resetForm()">X
-			  <script>
-			    //reset anything typed in the form
-				function resetForm(){
-				  for(var i = 1; i<=6; i++) {
-				  document.getElementById("tb" + i).value = "";
-				  }
-				}
-			  </script>
-			</a>
-			<h2>Schedule Appointment</h2>
+			<a href="#closeCreate" title="Close" class="close" onclick="resetForm()">X</a>
+			<h2><center>Schedule Appointment</center></h2>
 			<div id="procedure">Procedure:
-			  <select id="tb1">
+			  <select id="tb1" onclick="$(this).css('color', 'black');">
+			  	<option id="op1" value="" style="display:none;">Select procedure</option>
 			    <!-- Dynamically filled -->
               </select>
 			</div><br/>
 			<div id="doctor">Doctor:
-			  <select id="tb2">
+			  <select id="tb2" onclick="$(this).css('color', 'black');">
+			  	<option id="op2" value="" style="display:none;">Select doctor</option>
                   <!-- Dynamically filled -->
 			  </select>
 			</div><br/>
-			<div id="descr">Description:
-			  <input type="text" id="tb3"/>
-			</div><br/>
 			<div id="patient">Patient:
-			  <input type="text" id="tb4"/>
+			  <input type="text" id="tb4" placeholder="Enter name"/>
 			</div><br/>
-			<div id="start">Start:
-              <input type="text" id="tb5"/>
+			<div id="start">
+				<label for="tb5">Start</label>
+				<input id="tb5" type="date" min="1970-01-01" max="2099-12-31" size="12" style="font-family: Arial, Helvetica, sans-serif;" name="startdate" onclick="$(this).css('color', 'black'); $('#tb14').css('color', 'black');"/>
+				<input type="time" style="font-family: Arial, Helvetica, sans-serif;" id="tb14" onclick="$(this).css('color', 'black'); $('#tb5').css('color', 'black');"/>
 			</div><br/>
-			<div id="duration">End:
-			  <input type="text" id="tb6"/>
+			<div id="end">
+				<label for="tb6">End</label>
+				<input id="tb6" type="date" min="1970-01-01" max="2099-12-31" size="12" style="font-family: Arial, Helvetica, sans-serif;" name="enddate" onclick="$(this).css('color', 'black'); $('#tb15').css('color', 'black');"/>
+				<input type="time" style="font-family: Arial, Helvetica, sans-serif;" id="tb15" onclick="$(this).css('color', 'black'); $('#tb6').css('color', 'black');"/>
+			</div><br/>
+			<div id="descr">
+			  <center><textarea id="tb3" cols="52" rows="5" style="font-family: Arial, Helvetica, sans-serif;" placeholder="Include any notes here, such as patient symptoms, prescribed medication, or special accommodations."></textarea></center>
 			</div><br/>
 			<button id="create" onclick="create()">Create</button>
 			<script>
@@ -186,81 +192,227 @@
                     var doctor = document.getElementById("tb2").value;
                     var descr = document.getElementById("tb3").value;
                     var patient = document.getElementById("tb4").value;
+
+                    //string manipulation to get the format back into military time for the database
                     var start = document.getElementById("tb5").value;
+                    var starttime = document.getElementById("tb14").value;
+                    var upStart = start+" "+starttime;
                     var end = document.getElementById("tb6").value;
-                    
-                    $.ajax({
+                    var endtime = document.getElementById("tb15").value;
+                    var upEnd = end+" "+endtime;
+
+                    //TEST CASES:
+                    var a = moment(upStart), b = moment(upEnd);
+                    var test1=false, test2=false, test3=false, test4=false;
+                    var test5=false, test6=false, test7=false, test8=false;
+
+                    //Note: Tests are performed on field data from the bottom of the form to the top,
+                    //so that the topmost item in the form with an incorrect field is the one highlighted.
+
+                    //ENSURE START TIME != END TIME
+                    if(a.format('X') == b.format('X')){
+                        alert("Start and end times are the same!");
+                        hlBothErr();
+                    }
+                    else test8=true;
+
+                    //ENSURE START TIME OCCURS BEFORE END TIME
+                    if(moment.min(a, b) == b || moment(upStart).format('X') < moment(upEnd).format('X')){
+                        alert("End date is earlier than the start date!");
+                        hlBothErr();
+                    }
+                    else test7=true;
+
+                    //ENSURE START/END TIMES ARE NOT IN THE PAST
+                    var alert1=false;
+                    if(a.format('X') < moment().format('X')){
+                        alert("Can't set an appointment in the past!");
+                        hlStartErr();
+                        alert1=true;
+                    }
+                    else test5=true;
+                    if(b.format('X') < moment().format('X')){
+                        if(!alert1) alert("Can't set an appointment in the past!");
+                        hlEndErr();
+                    }
+                    else test6=true;
+
+                    //ENSURE START/END TIMES ARE FORMED PROPERLY
+                    if(!a.isValid() || !b.isValid()){
+                        if(!a.isValid()){
+                          hlStartErr();
+                        } 
+                        else{
+                           hlEndErr();
+                        } 
+                    } 
+                    else test4=true;
+
+                    //ENSURE PROCEDURE, DOCTOR, PATIENT FIELDS ARE FILLED
+                    if(patient != "") test3=true;
+                    else{
+                        $('#tb4').focus();
+                    }
+                    if(doctor != "") test2=true;
+                    else{
+                       $('#tb2').css("color", "red");
+                       $('#tb2').focus();
+                    }
+                    if(procedure != "") test1=true;
+                    else{
+                        $('#tb1').css("color", "red");
+                        $('#tb1').focus();
+                    }
+
+                    //IF ALL TESTS PASXED: GOOD TO GO!
+                    if(test1 && test2 && test3 && test4 && test5 && test6 && test7 && test8){
+                    	$.ajax({
                             url: 'http://54.174.120.2:3000/create-event',
                             type: 'PUT',
                             data: {procedure_id: procedure,
                                    doctor_id: doctor,
                                    descr: descr,
                                    patient: patient,
-                                   start: start,
-                                   end: end},
+                                   start: upStart,
+                                   end: upEnd},
                             success: function(result) {
                                 $('#calendar').fullCalendar( 'refetchEvents' );
                                 $('#calendar').fullCalendar( 'rerenderEvents' );
 					            location.href = "#closeCreate";
+					            resetForm();
                             }
                     });
+                    } 
 			    }
 			</script>
 		</div>
 	</div>
 
+    <!-- POPUP FORM FOR UPDATING/DELETING AN EXISTING APPOINTMENT (COMPLETED FIELDS ARE AUTO-POPULATED WITH APPT. DATA) -->
 	<a href="#openModalUpdate"/>
 	<div id="openModalUpdate" class="modalDialog">
 		<div>
-			<a href="#closeUpdate" title="Close" class="close" onclick="resetForm()">X
-			  <script>
-			    //reset anything typed in the form
-				function resetForm(){
-				  for(var i = 1; i<=6; i++) {
-				  document.getElementById("tb" + i).value = "";
-				  }
-				}
-			  </script>
-			</a>
-			<h2>Schedule Appointment</h2>
+			<a href="#closeUpdate" title="Close" class="close" onclick="resetForm()">X</a>
+			<h2><center>Review Appointment</center></h2>
 			<div id="procedure">Procedure:
-			  <select id="tb7">
+			  <select id="tb7" onclick="$(this).css('color', 'black');">
+                <option id="op3" value="" style="display:none;">Select procedure</option>
 			    <!-- Dynamically filled -->
               </select>
 			</div><br/>
 			<div id="doctor">Doctor:
-			  <select id="tb8">
+			  <select id="tb8" onclick="$(this).css('color', 'black');">
+                <option id="op4" value="" style="display:none;">Select doctor</option>
                   <!-- Dynamically filled -->
 			  </select>
 			</div><br/>
-			<div id="descr">Description:
-			  <input type="text" id="tb9"/>
-			</div><br/>
 			<div id="patient">Patient:
-			  <input type="text" id="tb10"/>
+			  <input type="text" id="tb10" placeholder="Enter name"/>
 			</div><br/>
-			<div id="start">Start:
-              <input type="text" id="tb11"/>
+			<div id="start">
+              <label for="tb11">Start</label>
+				<input id="tb11" type="date" min="1970-01-01" max="2099-12-31" size="12" style="font-family: Arial, Helvetica, sans-serif;" name="startdate" onclick="$(this).css('color', 'black'); $('#tb16').css('color', 'black');"/>
+				<input type="time" style="font-family: Arial, Helvetica, sans-serif;" id="tb16" onclick="$(this).css('color', 'black'); $('#tb11').css('color', 'black');"/>
 			</div><br/>
-			<div id="duration">End:
-			  <input type="text" id="tb12"/>
+			<div id="end">
+			  <label for="tb12">End</label>
+			  <input id="tb12" type="date" min="1970-01-01" max="2099-12-31" size="12" style="font-family: Arial, Helvetica, sans-serif;" name="enddate" onclick="$(this).css('color', 'black'); $('#tb17').css('color', 'black');"/>
+			  <input type="time" style="font-family: Arial, Helvetica, sans-serif;" id="tb17" onclick="$(this).css('color', 'black'); $('#tb12').css('color', 'black');"/>
+			</div><br/>
+			<div id="descr">
+				<center><textarea id="tb9" cols="52" rows="5" style="font-family: Arial, Helvetica, sans-serif;" placeholder="Include any notes here, such as patient symptoms, prescribed medication, or special accommodations."></textarea></center>
 			</div><br/>
             <div id="id" style="visibility: hidden">
                 <input type="text" id="tb13"/>
             </div>
 			<button id="update" onclick="update()">Update</button>
-            <button id="delete" onclick="del()">Delete</button>
+	        <button id="delete" onclick="del()">Delete</button>
 			<script>
 			    function update(){
                     var id = document.getElementById("tb13").value;
-                    var procedure = document.getElementById("tb7").value;
-                    var doctor = document.getElementById("tb8").value;
-                    var descr = document.getElementById("tb9").value;
-                    var patient = document.getElementById("tb10").value;
+                    var upProcedure = document.getElementById("tb7").value;
+                    var upDoctor = document.getElementById("tb8").value;
+                    var upDescr = document.getElementById("tb9").value;
+                    var upPatient = document.getElementById("tb10").value;
+
+                    //string manipulation to get the format back into military time for the database
                     var start = document.getElementById("tb11").value;
+                    var starttime = document.getElementById("tb16").value;
+                    var upStart = start+" "+starttime;
                     var end = document.getElementById("tb12").value;
-                    
-                    $.ajax({
+                    var endtime = document.getElementById("tb17").value;
+                    var upEnd = end+" "+endtime;
+
+                    //TEST CASES:
+                    var a = moment(upStart), b = moment(upEnd);
+                    var test1=false, test2=false, test3=false, test4=false;
+                    var test5=false, test6=false, test7=false, test8=false;
+
+                    //Note: Tests are performed on field data from the bottom of the form to the top,
+                    //so that the topmost item in the form with an incorrect field is the one highlighted.
+
+                    //ENSURE START TIME != END TIME
+                    if(a.format('X') == b.format('X')){
+                        alert("Start and end times are the same!");
+                        hlBothErr2();
+                    }
+                    else test8=true;
+
+                    //ENSURE START TIME OCCURS BEFORE END TIME
+                    console.log(moment(upStart).format('X'));
+                    console.log(moment(upEnd).format('X'));
+                    if(moment.min(a, b) == b || moment(upStart).format('X') < moment(upEnd).format('X')){
+                        alert("End date is earlier than the start date!");
+                        hlBothErr2();
+                    }
+                    else test7=true;
+
+                    //ENSURE START/END TIMES ARE NOT IN THE PAST
+                    var alert1=false;
+                    if(a.format('X') < moment().format('X')){
+                        alert("Can't set an appointment in the past!");
+                        hlStartErr2();
+                        alert1=true;
+                    }
+                    else test5=true;
+                    if(b.format('X') < moment().format('X')){
+                        if(!alert1) alert("Can't set an appointment in the past!");
+                        hlEndErr2();
+                    }
+                    else test6=true;
+
+                    //ENSURE START/END TIMES ARE FORMED PROPERLY
+                    if(!a.isValid() || !b.isValid()){
+                        if(!a.isValid()){
+                          $('#tb11').css("color", "red");
+                          $('#tb11').focus(); 
+                        } 
+                        else{
+                           $('#tb12').css("color", "red");
+                           $('#tb12').focus();
+                        } 
+                    } 
+                    else test4=true;
+
+                    //ENSURE PROCEDURE, DOCTOR, PATIENT FIELDS ARE FILLED
+                    if(upPatient != "") test3=true;
+                    else{
+                        $('#tb10').focus();
+                    }
+                    if(upDoctor != "") test2=true;
+                    else{
+                       $('#tb8').css("color", "red");
+                       $('#tb8').focus();
+                    }
+                    if(upProcedure != "") test1=true;
+                    else{
+                        $('#tb7').css("color", "red");
+                        $('#tb7').focus();
+                    }
+
+                    //IF ALL TESTS PASXED: GOOD TO GO!
+                    if(test1 && test2 && test3 && test4 && test5 && test6 && test7 && test8){
+                    	$.ajax({
                             url: 'http://54.174.120.2:3000/' + id + '/update-event',
                             type: 'POST',
                             data: {procedure_id: upProcedure,
@@ -273,24 +425,111 @@
                                 $('#calendar').fullCalendar( 'refetchEvents' );
                                 $('#calendar').fullCalendar( 'rerenderEvents' );
 					            location.href = "#closeUpdate";
+					            resetForm();
                             }
-                    });
+                    	});
+                    }
 			    }
 
                 function del(){
                     var id = document.getElementById("tb13").value;
                     $.ajax({
-                            url: 'http://54.174.120.2:3000/' + id + '/delete-event',
-                            type: 'DELETE',
-                            success: function(result) {
-                                $("#calendar").fullCalendar( 'refetchEvents' );
-                                $("#calendar").fullCalendar( 'rerenderEvents' );
-					            location.href = "#closeUpdate";
-                            }
+                        url: 'http://54.174.120.2:3000/' + id + '/delete-event',
+                        type: 'DELETE',
+                        success: function(result) {
+                            $("#calendar").fullCalendar( 'refetchEvents' );
+                            $("#calendar").fullCalendar( 'rerenderEvents' );
+                            location.href = "#closeUpdate";
+                            resetForm();
+                        }
                     });
                 }
 			</script>
 		</div>
 	</div>
+	<script>
+
+		//reset anything typed in the form
+		function resetForm(){
+			for(var i = 1; i<=17; i++){
+				document.getElementById("tb" + i).value = ""; 
+                document.getElementById("tb" + i).style.color = "";
+			}
+		}
+
+        //FORM ERROR HIGHLIGHTING FOR CREATE APPOINTMENT CASE
+        function hlStartErr(){
+            $('#tb5').css("color", "red");
+            $('#tb14').css("color", "red");
+            $('#tb5').focus();
+        }
+
+        function hlEndErr(){
+                    $('#tb6').css("color", "red");
+                    $('#tb15').css("color", "red");
+                    $('#tb6').focus();
+                }
+
+        function hlBothErr(){
+                    $('#tb5').css("color", "red");
+                    $('#tb14').css("color", "red");
+                    $('#tb6').css("color", "red");
+                    $('#tb15').css("color", "red");
+                    $('#tb6').focus();
+                    $('#tb5').click(function(){
+                        $('#tb6').css("color", ""); 
+                        $('#tb15').css("color", "");
+                    });
+                    $('#tb14').click(function(){
+                        $('#tb6').css("color", ""); 
+                        $('#tb15').css("color", "");
+                    });
+                    $('#tb6').click(function(){
+                        $('#tb5').css("color", ""); 
+                        $('#tb14').css("color", "");
+                    });
+                    $('#tb15').click(function(){
+                        $('#tb5').css("color", ""); 
+                        $('#tb14').css("color", "");
+                    });
+                }
+
+        //FORM ERROR HIGHLIGHTING FOR UPDATE/DELETE APPOINTMENT CASE
+        function hlStartErr2(){
+            $('#tb11').css("color", "red");
+            $('#tb16').css("color", "red");
+            $('#tb11').focus();
+        }
+
+        function hlEndErr2(){
+            $('#tb12').css("color", "red");
+            $('#tb17').css("color", "red");
+            $('#tb12').focus();
+        }
+
+        function hlBothErr2(){
+            $('#tb11').css("color", "red");
+            $('#tb16').css("color", "red");
+            $('#tb12').css("color", "red");
+            $('#tb17').css("color", "red");
+            $('#tb12').focus();
+            $('#tb11').click(function(){
+                $('#tb12').css("color", ""); 
+                $('#tb17').css("color", "");
+            });
+            $('#tb16').click(function(){
+                $('#tb12').css("color", ""); 
+                $('#tb17').css("color", "");
+            });
+            $('#tb12').click(function(){
+                $('#tb11').css("color", ""); 
+                $('#tb16').css("color", "");
+            });
+            $('#tb17').click(function(){
+                $('#tb11').css("color", ""); 
+                $('#tb16').css("color", "");
+            });
+        }
+	</script>
 </body>
 </html>
