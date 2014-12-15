@@ -210,21 +210,23 @@
                     //so that the topmost item in the form with an incorrect field is the one highlighted.
 
                     //ENSURE START TIME != END TIME
+                    var alert1=false;
                     if(a.format('X') == b.format('X')){
                         alert("Start and end times are the same!");
                         hlBothErr();
+                        alert1=true;
                     }
                     else test8=true;
 
                     //ENSURE START TIME OCCURS BEFORE END TIME
-                    if(moment.min(a, b) == b || moment(upStart).format('X') < moment(upEnd).format('X')){
-                        alert("End date is earlier than the start date!");
+                    if(moment.min(a, b) == b || moment(upStart).format('X') >= moment(upEnd).format('X')){
+                        if(!alert1) alert("End date is earlier than the start date!");
                         hlBothErr();
                     }
                     else test7=true;
 
                     //ENSURE START/END TIMES ARE NOT IN THE PAST
-                    var alert1=false;
+                    alert1=false;
                     if(a.format('X') < moment().format('X')){
                         alert("Can't set an appointment in the past!");
                         hlStartErr();
@@ -352,23 +354,23 @@
                     //so that the topmost item in the form with an incorrect field is the one highlighted.
 
                     //ENSURE START TIME != END TIME
+                    var alert1=false;
                     if(a.format('X') == b.format('X')){
                         alert("Start and end times are the same!");
                         hlBothErr2();
+                        alert1=true;
                     }
                     else test8=true;
 
                     //ENSURE START TIME OCCURS BEFORE END TIME
-                    console.log(moment(upStart).format('X'));
-                    console.log(moment(upEnd).format('X'));
-                    if(moment.min(a, b) == b || moment(upStart).format('X') < moment(upEnd).format('X')){
-                        alert("End date is earlier than the start date!");
+                    if(moment.min(a, b) == b || moment(upStart).format('X') >= moment(upEnd).format('X')){
+                        if(!alert1) alert("End date is earlier than the start date!");
                         hlBothErr2();
                     }
                     else test7=true;
 
                     //ENSURE START/END TIMES ARE NOT IN THE PAST
-                    var alert1=false;
+                    alert1=false;
                     if(a.format('X') < moment().format('X')){
                         alert("Can't set an appointment in the past!");
                         hlStartErr2();
