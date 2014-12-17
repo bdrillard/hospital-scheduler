@@ -115,7 +115,8 @@
 				dayClick: function(date, jsEvent, view) {
 
 					//disable appointment creation on dates that have already passed (because what's the point?)
-					if(date.format('X') >= moment().format('X') || date.format('l') == moment().format('l')){
+					if((date.format('DDD') >= moment().format('DDD') && date.format('YYYY') == moment().format('YYYY')) 
+                        || date.format('YYYY') > moment().format('YYYY')){
 						//format the date for the database
 	                	$('#tb5').val(date.format("YYYY-MM-DD"));
 	                	$('#tb6').val(date.format("YYYY-MM-DD"));
