@@ -57,7 +57,7 @@
   [{:keys [start end patient doctor_id procedure_id descr]}]
   (if (collision? -1 start patient doctor_id)
     (response {:status 403
-               :body {:error (str "An event at " start " was already scheduled for the selected doctor")}})
+               :body {:error (str "An event at " start " was already scheduled for the selected doctor or patient")}})
     (do
       (insert-event! db start end patient doctor_id procedure_id descr)
       (response {:status 200
