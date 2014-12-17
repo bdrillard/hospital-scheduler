@@ -130,6 +130,21 @@
 				//IF USER CLICKS EXISTING APPOINTMENT
 				eventClick: function(calEvent, jsEvent, view) {
 
+                    //disable changing form field data in past appointments
+                    if(!((calEvent.start.format('DDD') >= moment().format('DDD') && calEvent.start.format('YYYY') == moment().format('YYYY')) 
+                        || calEvent.start.format('YYYY') > moment().format('YYYY'))){
+                        for(var i=1; i<=17; i++){
+                            $('#tb' + i).attr('disabled', 'disabled');
+                        }
+                        $('#update').css('visibility', 'hidden');
+                    }
+                    else{
+                        for(var i=1; i<=17; i++){
+                            $('#tb' + i).removeAttr('disabled');
+                        }
+                        $('#update').css('visibility', 'visible');
+                    }
+
 					// set defaults to existing event
                     $('#tb7').val(calEvent.procedure_id);
                     $('#tb8').val(calEvent.doctor_id);
