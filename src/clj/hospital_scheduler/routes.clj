@@ -26,8 +26,8 @@
 (defn collision?
   "Determine if any events exist with a given doctor already scheduled at
   a given time"
-  [id start doctor_id]
-  (if (seq (select-collisions db id start doctor_id))
+  [id start patient doctor_id]
+  (if (seq (select-collisions db id start patient doctor_id))
     true
     false))
 
@@ -55,7 +55,7 @@
   "Register a new event.
   Disallow a doctor from being registered two different events at the same time"
   [{:keys [start end patient doctor_id procedure_id descr]}]
-  (if (collision? -1 start doctor_id)
+  (if (collision? -1 start patient doctor_id)
     (response {:status 403
                :body {:error (str "An event at " start " was already scheduled for the selected doctor")}})
     (do
@@ -82,10 +82,10 @@
        :or [start nil end nil patient nil doctor_id nil procedure_id nil descr nil]
        :as event-updates}]
   (let [old-event (first (select-event db id)) ; select-event on unique id returns single element list
-        {:keys [new-start new-doctor_id] :as new-event} (merge-new old-event event-updates)]
-    (if (collision? id new-start new-doctor_id)
+        new-event (merge-new old-event event-updates)]
+    (if (collision? id (:start new-event) (:patient new-event) (:doctor_id new-event))
       (response {:status 403
-                 :body {:error (str "An event at " new-start " was already scheduled for the selected doctor")}})
+                 :body {:error (str "An event at " (:start new-event) " was already scheduled for the selected doctor or patient")}})
       (do
         (update-event! db start end patient doctor_id procedure_id descr id)
         (response {:status 200
@@ -97,4 +97,4 @@
   (do
     (delete-event! db id)
     (response {:status 200
-	       :body (str "Event deleted")})))
+               :body (str "Event deleted")})))
