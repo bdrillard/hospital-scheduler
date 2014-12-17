@@ -166,7 +166,7 @@ body .fc { /* extra precedence to overcome jqui */
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
-.fc-state-hover,
+
 .fc-state-down,
 .fc-state-active,
 .fc-state-disabled {
@@ -174,9 +174,14 @@ body .fc { /* extra precedence to overcome jqui */
 	background-color: #e6e6e6;
 }
 
+
+/*Adds a shadow at the bottom of the button when cursor is on them */
+
 .fc-state-hover {
-	color: #333333;
+	/*color: #333333;*/
 	text-decoration: none;
+	color: #D4CCC5;
+	background-color: #D4CCC5;
 	background-position: 0 -15px;
 	-webkit-transition: background-position 0.1s linear;
 	   -moz-transition: background-position 0.1s linear;
@@ -310,9 +315,9 @@ previous button's border...
 --------------------------------------------------------------------------------------------------*/
 
 .fc table {
-	width: 100%;
-	table-layout: fixed;
-	border-collapse: collapse;
+
+	width:100%; 
+	table-layout: fixed; 
 	border-spacing: 0;
 	font-size: 1em; /* normalize cross-browser */
 }
@@ -323,15 +328,33 @@ previous button's border...
 
 .fc th,
 .fc td {
-	border-style: solid;
-	border-width: 1px;
-	padding: 0;
-	vertical-align: top;
+ 	border-style: solid;
+	border-width: 0x;
+	padding: 2;
+	vertical-align: top; 
 }
 
 .fc td.fc-today {
 	border-style: double; /* overcome neighboring borders */
 }
+
+table {
+    border-collapse:separate;
+/*    border:solid black 1px;*/
+    border-radius:6px;
+    -moz-border-radius:6px;
+}
+
+th {
+    background-color: #EFECE5;
+    border-top: none;
+}
+
+td:first-child {
+     border-left: none;
+}
+
+
 
 
 /* Fake Table Rows
